@@ -1,13 +1,8 @@
 import BoardSquare from "./boardSquare.js";
 import React, { useState, useRef } from "react";
-//values to place things
-let chessBoard = [];
-for (let i = 0; i < 64; i++) {
-  chessBoard.push(i);
-}
 
 //location map that stores places of pieces
-let initialLocationMap = {};
+let initialLocationMap = new Array(64).fill(null);
 
 //placing pawns
 for (let i = 8; i < 16; i++) {
@@ -42,17 +37,13 @@ startingPlaces.forEach((startingPlace) => {
   }
 });
 
-//assign null to all empty spaces
-for (let i = 16; i < 48; i++) {
-  initialLocationMap[i] = null;
-}
-
 // chess board component
 function ChessBoard() {
   let activePiece = null;
   let chessBoardRef = useRef(null);
   const [locationMap, setLocationMap] = useState(initialLocationMap);
 
+  //function to grab onto piece and assign active piece element
   function grabPiece(e) {
     let element = e.target;
     if (element.classList.contains("chess-piece") && !activePiece) {
@@ -64,6 +55,7 @@ function ChessBoard() {
     }
   }
 
+  //once active piece has been assigned, the piece can be moved
   function movePiece(e) {
     if (activePiece) {
       activePiece.style.left = `${e.clientX - 60}px`;
@@ -71,6 +63,7 @@ function ChessBoard() {
     }
   }
 
+  //once the user is done moving the piece, it needs to be set down, and replace a piece that was there.
   function setDownPiece(e) {
     let chessBoard = chessBoardRef.current;
 
@@ -88,7 +81,7 @@ function ChessBoard() {
         Math.floor((e.clientY - chessBoard.offsetTop) / 120) * 8;
 
       //creates a new location map that modifies rendered values
-      let newLocationMap = { ...locationMap };
+      let newLocationMap = [...locationMap];
       newLocationMap[nextLocation] = pieceType;
       newLocationMap[currentLocation] = null;
       setLocationMap(newLocationMap);
@@ -105,13 +98,13 @@ function ChessBoard() {
       onMouseMove={(e) => movePiece(e)}
       onMouseUp={(e) => setDownPiece(e)}
     >
-      {chessBoard.map((num) => {
+      {locationMap.map((piece, index) => {
         return (
           <BoardSquare
-            color={(Math.floor(num / 8) + num) % 2}
-            chessPiece={locationMap[num]}
-            pieceID={num}
-            key={num}
+            color={(Math.floor(index / 8) + index) % 2}
+            chessPiece={piece}
+            pieceID={index}
+            key={index}
           />
         );
       })}
