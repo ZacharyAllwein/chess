@@ -73,20 +73,26 @@ function ChessBoard() {
 
       //figure out where it currently is and what type of piece it is
       let pieceType = activePiece.style.backgroundImage.slice(24, -6);
-      let currentLocation = activePiece.id;
+      let currentLocation = parseInt(activePiece.id);
+
+      //reset active piece so it can be used again and will stop moving
+      activePiece = null;
 
       //uses pixel calculations to figure out index of where piece was dropped
       let nextLocation =
         Math.floor((e.clientX - chessBoard.offsetLeft) / 120) +
         Math.floor((e.clientY - chessBoard.offsetTop) / 120) * 8;
 
+      //catches if piece is moved back to its own location. still want snapping functionality, but not piece reset
+
       //creates a new location map that modifies rendered values
       let newLocationMap = [...locationMap];
       newLocationMap[nextLocation] = pieceType;
+      if (nextLocation === currentLocation) {
+        return;
+      }
       newLocationMap[currentLocation] = null;
       setLocationMap(newLocationMap);
-
-      activePiece = null;
     }
   }
 
