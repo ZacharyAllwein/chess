@@ -1,0 +1,38 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  color: #ffffed;
+}
+
+body {
+  background-size: cover;
+  background-image: url(/public/assets/woodTexture.jpg);
+  position: fixed;
+  height: 100%;
+  width: 100%;
+}
+
+.chess-board {
+  display: grid;
+  row-gap: 0;
+  column-gap: 0;
+  grid-template-columns: auto auto auto auto auto auto auto auto;
+  width: 50%;
+  margin: auto;
+}
+
+.chess-square {
+  height: 7.5rem;
+  width: 7.5rem;
+  display: grid;
+  place-content: center;
+}
+
+.chess-piece {
+  width: 10rem;
+  height: 10rem;
+  background-size: 7.5rem;
+  background-repeat: no-repeat;
+  background-position: center;
+}
