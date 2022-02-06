@@ -1,4 +1,4 @@
-function BoardSquare({ color, chessPiece }) {
+function BoardSquare({ color, chessPiece, pieceID }) {
   return (
     // Main div that displays a square that changes color based on passed in color.
     <div
@@ -11,6 +11,7 @@ function BoardSquare({ color, chessPiece }) {
           style={{
             backgroundImage: `url(assets/chessPieces/${chessPiece}.png)`,
           }}
+          id={pieceID}
         ></div>
       )}
     </div>
