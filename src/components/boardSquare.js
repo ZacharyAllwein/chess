@@ -5,7 +5,7 @@ function BoardSquare({ color, chessPiece }) {
       className="chess-square"
       style={{ backgroundColor: color === 1 ? "#7B3F00" : "#FFFFED" }}
     >
-      {chessPiece == null ? null : (
+      {chessPiece && (
         <div
           className="chess-piece"
           style={{
