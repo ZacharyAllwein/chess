@@ -23,16 +23,16 @@ body {
 }
 
 .chess-square {
-  height: 120px;
-  width: 120px;
+  height: 6.4vw;
+  width: 6.4vw;
   display: grid;
   place-content: center;
 }
 
 .chess-piece {
-  width: 120px;
-  height: 120px;
-  background-size: 120px;
+  width: 6.4vw;
+  height: 6.4vw;
+  background-size: 6.4vw;
   background-repeat: no-repeat;
   background-position: center;
 }
