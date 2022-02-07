@@ -45,17 +45,18 @@ function ChessBoard() {
   let chessBoardRef = useRef(null);
 
   //useStates
-  const [chessBoardSquareSize, setChessBoardSquareSize] = useState(.064*window.innerWidth)
+  const [chessBoardSquareSize, setChessBoardSquareSize] = useState(
+    0.064 * window.innerWidth
+  );
   const [locationMap, setLocationMap] = useState(initialLocationMap);
-  
+
   //when window changes sizes, so does the defined chessboardsquare size so movement still works
-  const resize = () => setChessBoardSquareSize(.064*window.innerWidth)
+  const resize = () => setChessBoardSquareSize(0.064 * window.innerWidth);
   useEffect(() => {
+    window.addEventListener("resize", resize);
 
-    window.addEventListener("resize", resize)
-
-    return () => window.removeEventListener("resize", resize)
-  })
+    return () => window.removeEventListener("resize", resize);
+  });
 
   //function to grab onto piece and assign active piece element
   function grabPiece(e) {
@@ -64,8 +65,8 @@ function ChessBoard() {
       element.style.position = "absolute";
 
       //elements should be grabbed at the center, this takes care of that offset
-      element.style.left = `${e.clientX - chessBoardSquareSize/2}px`;
-      element.style.top = `${e.clientY - chessBoardSquareSize/2}px`;
+      element.style.left = `${e.clientX - chessBoardSquareSize / 2}px`;
+      element.style.top = `${e.clientY - chessBoardSquareSize / 2}px`;
 
       activePiece = element;
     }
@@ -74,8 +75,8 @@ function ChessBoard() {
   //once active piece has been assigned, the piece can be moved
   function movePiece(e) {
     if (activePiece) {
-      activePiece.style.left = `${e.clientX - chessBoardSquareSize/2}px`;
-      activePiece.style.top = `${e.clientY - chessBoardSquareSize/2}px`;
+      activePiece.style.left = `${e.clientX - chessBoardSquareSize / 2}px`;
+      activePiece.style.top = `${e.clientY - chessBoardSquareSize / 2}px`;
     }
   }
 
@@ -84,8 +85,8 @@ function ChessBoard() {
     let chessBoard = chessBoardRef.current;
 
     if (activePiece) {
-      activePiece.style.left = `${e.clientX - chessBoardSquareSize/2}px`;
-      activePiece.style.top = `${e.clientY - chessBoardSquareSize/2}px`;
+      activePiece.style.left = `${e.clientX - chessBoardSquareSize / 2}px`;
+      activePiece.style.top = `${e.clientY - chessBoardSquareSize / 2}px`;
 
       //figure out where it currently is and what type of piece it is
       let pieceType = activePiece.style.backgroundImage.slice(24, -6);
@@ -97,7 +98,8 @@ function ChessBoard() {
       //uses pixel calculations to figure out index of where piece was dropped
       let nextLocation =
         Math.floor((e.clientX - chessBoard.offsetLeft) / chessBoardSquareSize) +
-        Math.floor((e.clientY - chessBoard.offsetTop) / chessBoardSquareSize) * 8;
+        Math.floor((e.clientY - chessBoard.offsetTop) / chessBoardSquareSize) *
+          8;
 
       //catches if piece is moved back to its own location. still want snapping functionality, but not piece reset
 
