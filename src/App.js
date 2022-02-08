@@ -1,11 +1,11 @@
-import ChessBoard from "./components/chessBoard.js";
+import Game from "./components/Game.js";
 
 function App() {
   return (
     //background with fixed wood texture
     <body>
       <h1>Chess</h1>
-      <ChessBoard />
+      <Game />
     </body>
   );
 }

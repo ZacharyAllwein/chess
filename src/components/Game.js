@@ -1,11 +1,11 @@
-import BoardSquare from "./boardSquare.js";
+import BoardSquare from "./BoardSquare.js";
 import React, { useState, useRef, useEffect } from "react";
 import ChessGame from "../chessUtils/chessGame.js";
 
 //everything has to be responsive. .064 is the basic vw size unit used for scaling chessboard squares
 const game = new ChessGame();
 // chess board component
-function ChessBoard() {
+function Game() {
   //game that handles board state data
 
   let chessBoardRef = useRef(null);
@@ -79,12 +79,9 @@ function ChessBoard() {
     let chessBoard = chessBoardRef.current;
 
     if (activePiece) {
-      activePiece.style.left = `${e.clientX - chessBoardSquareSize / 2}px`;
-      activePiece.style.top = `${e.clientY - chessBoardSquareSize / 2}px`;
 
       //figure out where it currently is and what type of piece it is
-      let currentLocation = parseInt(activePiece.id);
-
+      let previousLocation = parseInt(activePiece.id);
       //reset active piece so it can be used again and will stop moving
       setActivePiece(null);
 
@@ -95,7 +92,11 @@ function ChessBoard() {
           8;
 
       //moving pieces!!!
-      game.movePiece(currentLocation, nextLocation);
+
+      //if there was no movement don't do anything
+      if(previousLocation === nextLocation) return;
+
+      game.movePiece(previousLocation, nextLocation);
 
       //umm yeah it works though
       setBoardState(game.boardState.map((piece) => piece));
@@ -126,4 +127,4 @@ function ChessBoard() {
     </div>
   );
 }
-export default ChessBoard;
+export default Game;
