@@ -2,6 +2,8 @@
 export default class ChessGame {
   constructor() {
     this.boardState = this.genInitialBoardState();
+    //0 for white 1 for black
+    this.turn = "white";
   }
 
   genInitialBoardState() {
