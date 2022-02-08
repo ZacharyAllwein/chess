@@ -41,9 +41,24 @@ function ChessBoard() {
 
   //once active piece has been assigned, the piece can be moved
   function movePiece(e) {
+    let chessBoard = chessBoardRef.current;
+
+    const isInBounds = (x, y) => {
+      let edgeAdjust = chessBoardSquareSize / 2;
+
+      const maxX =
+        chessBoard.offsetLeft + 8 * chessBoardSquareSize - edgeAdjust;
+      const minX = chessBoard.offsetLeft + edgeAdjust;
+      const maxY = chessBoard.offsetTop + 8 * chessBoardSquareSize - edgeAdjust;
+      const minY = chessBoard.offsetTop + edgeAdjust;
+
+      return x >= minX && x <= maxX && y >= minY && y <= maxY;
+    };
+
     if (activePiece) {
-      activePiece.style.left = `${e.clientX - chessBoardSquareSize / 2}px`;
+      if (!isInBounds(e.clientX, e.clientY)) return;
       activePiece.style.top = `${e.clientY - chessBoardSquareSize / 2}px`;
+      activePiece.style.left = `${e.clientX - chessBoardSquareSize / 2}px`;
     }
   }
 
