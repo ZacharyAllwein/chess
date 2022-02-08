@@ -1,46 +1,13 @@
 import BoardSquare from "./boardSquare.js";
 import React, { useState, useRef, useEffect } from "react";
-
-//location map that stores places of pieces
-let initialLocationMap = new Array(64).fill(null);
-
-//placing pawns
-for (let i = 8; i < 16; i++) {
-  initialLocationMap[i] = "blackPawn";
-}
-
-for (let i = 48; i < 56; i++) {
-  initialLocationMap[i] = "whitePawn";
-}
-
-//placing other pieces
-const pieceMap = [
-  "Rook",
-  "Knight",
-  "Bishop",
-  "Queen",
-  "King",
-  "Bishop",
-  "Knight",
-  "Rook",
-];
-//starting places for main pieces
-const startingPlaces = [0, 56];
-
-//placing more important chess pieces using above map
-startingPlaces.forEach((startingPlace) => {
-  for (let i = startingPlace; i < startingPlace + 8; i++) {
-    let pieceColor = i >= 56 ? "white" : "black";
-    let pieceType = i >= 56 ? pieceMap[i - 56] : pieceMap[i];
-
-    initialLocationMap[i] = pieceColor + pieceType;
-  }
-});
+import ChessGame from "../chessUtils/chessGame.js";
 
 //everything has to be responsive. .064 is the basic vw size unit used for scaling chessboard squares
-
+const game = new ChessGame();
 // chess board component
 function ChessBoard() {
+  //game that handles board state data
+
   let activePiece = null;
   let chessBoardRef = useRef(null);
 
@@ -48,7 +15,7 @@ function ChessBoard() {
   const [chessBoardSquareSize, setChessBoardSquareSize] = useState(
     0.064 * window.innerWidth
   );
-  const [locationMap, setLocationMap] = useState(initialLocationMap);
+  const [boardState, setBoardState] = useState(game.boardState);
 
   //when window changes sizes, so does the defined chessboardsquare size so movement still works
   const resize = () => setChessBoardSquareSize(0.064 * window.innerWidth);
@@ -89,7 +56,6 @@ function ChessBoard() {
       activePiece.style.top = `${e.clientY - chessBoardSquareSize / 2}px`;
 
       //figure out where it currently is and what type of piece it is
-      let pieceType = activePiece.style.backgroundImage.slice(24, -6);
       let currentLocation = parseInt(activePiece.id);
 
       //reset active piece so it can be used again and will stop moving
@@ -101,16 +67,11 @@ function ChessBoard() {
         Math.floor((e.clientY - chessBoard.offsetTop) / chessBoardSquareSize) *
           8;
 
-      //catches if piece is moved back to its own location. still want snapping functionality, but not piece reset
+      //moving pieces!!!
+      game.movePiece(currentLocation, nextLocation);
 
-      //creates a new location map that modifies rendered values
-      let newLocationMap = [...locationMap];
-      newLocationMap[nextLocation] = pieceType;
-      if (nextLocation === currentLocation) {
-        return;
-      }
-      newLocationMap[currentLocation] = null;
-      setLocationMap(newLocationMap);
+      //umm yeah it works though
+      setBoardState(game.boardState.map((piece) => piece));
     }
   }
 
@@ -122,7 +83,7 @@ function ChessBoard() {
       onMouseMove={(e) => movePiece(e)}
       onMouseUp={(e) => setDownPiece(e)}
     >
-      {locationMap.map((piece, index) => {
+      {boardState.map((piece, index) => {
         return (
           <BoardSquare
             color={(Math.floor(index / 8) + index) % 2}
