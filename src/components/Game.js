@@ -79,7 +79,6 @@ function Game() {
     let chessBoard = chessBoardRef.current;
 
     if (activePiece) {
-
       //figure out where it currently is and what type of piece it is
       let previousLocation = parseInt(activePiece.id);
       //reset active piece so it can be used again and will stop moving
@@ -94,7 +93,7 @@ function Game() {
       //moving pieces!!!
 
       //if there was no movement don't do anything
-      if(previousLocation === nextLocation) return;
+      if (previousLocation === nextLocation) return;
 
       game.movePiece(previousLocation, nextLocation);
 

@@ -48,7 +48,7 @@ export default class ChessGame {
 
   //handles movement logic
   movePiece(prevIndex, nextIndex) {
-    this.boardState[nextIndex] = this.boardState[prevIndex]
+    this.boardState[nextIndex] = this.boardState[prevIndex];
     this.boardState[prevIndex] = null;
   }
 }
