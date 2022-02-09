@@ -3,15 +3,17 @@ import React, { useState, useRef, useEffect } from "react";
 import ChessGame from "../chessUtils/chessGame.js";
 
 const game = new ChessGame();
+let chessBoardSquareSize = 0.064 * window.innerWidth;
+let activePiece = null;
+let activePiecePosOldX = null;
+let activePiecePosOldY = null;
+
 function Game() {
   let chessBoardRef = useRef(null);
-  let activePiece = null;
-  let activePiecePosOldX = null;
-  let activePiecePosOldY = null;
-  let chessBoardSquareSize = 0.064 * window.innerWidth;
+
 
   const [boardState, setBoardState] = useState(game.boardState);
-  const [allowedMoves, setAllowedMoves] = useState(new Array(64).fill(null));
+  const [allowedMoves, setAllowedMoves] = useState((new Array(64).fill(null)))
 
   const resize = () => (chessBoardSquareSize = 0.064 * window.innerWidth);
   useEffect(() => {
@@ -33,11 +35,14 @@ function Game() {
       activePiece.style.position = "absolute";
       activePiecePosOldX = activePiece.style.left;
       activePiecePosOldY = activePiece.style.top;
-      console.log(activePiecePosOldX);
 
       //elements should be grabbed at the center, this takes care of that offset
       activePiece.style.left = `${e.clientX - chessBoardSquareSize / 2}px`;
       activePiece.style.top = `${e.clientY - chessBoardSquareSize / 2}px`;
+      
+      let tempAllowedMoves = [...allowedMoves]
+      tempAllowedMoves[activePiece.id - 8] = 1
+      setAllowedMoves(tempAllowedMoves)
     }
   }
 
@@ -74,10 +79,11 @@ function Game() {
           8;
 
       //conditions on which the piece should not move eg not allowed to move there
-      if (previousLocation === nextLocation) {
+      if (previousLocation === nextLocation || allowedMoves[nextLocation] !== 1) {
         activePiece.style.left = activePiecePosOldX;
         activePiece.style.top = activePiecePosOldY;
         activePiece = null;
+        setAllowedMoves(new Array(64).fill(null))
         return;
       }
 
@@ -88,6 +94,7 @@ function Game() {
       game.turn = game.turn === "white" ? "black" : "white";
 
       activePiece = null;
+      setAllowedMoves(new Array(64).fill(null))
     }
   }
 
@@ -106,6 +113,7 @@ function Game() {
             chessPiece={piece}
             pieceID={index}
             key={index}
+            highlight={allowedMoves[index]}
           />
         );
       })}
