@@ -10,9 +10,6 @@ function Game() {
   let activePiecePosOldY = null;
   let chessBoardSquareSize = 0.064 * window.innerWidth;
 
-  // const [chessBoardSquareSize, setChessBoardSquareSize] = useState(
-  //   0.064 * window.innerWidth
-  // );
   const [boardState, setBoardState] = useState(game.boardState);
   const [allowedMoves, setAllowedMoves] = useState(new Array(64).fill(null));
 
