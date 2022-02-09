@@ -3,7 +3,16 @@ function BoardSquare({ color, chessPiece, pieceID, highlight }) {
     // Main div that displays a square that changes color based on passed in color.
     <div
       className="chess-square"
-      style={{ backgroundColor: highlight === 1 ? color === 1 ? "#013220" : "#90EE90" : color === 1 ? "#7B3F00" : "#FFFFED" }}
+      style={{
+        backgroundColor:
+          highlight === 1
+            ? color === 1
+              ? "#013220"
+              : "#90EE90"
+            : color === 1
+            ? "#7B3F00"
+            : "#FFFFED",
+      }}
     >
       {chessPiece && (
         <div

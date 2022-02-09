@@ -4,14 +4,13 @@ import ChessGame from "../chessUtils/chessGame.js";
 
 const game = new ChessGame();
 let chessBoardSquareSize = 0.064 * window.innerWidth;
-let activePiece = null;
 let activePiecePosOldX = null;
 let activePiecePosOldY = null;
 
 function Game() {
   let chessBoardRef = useRef(null);
 
-
+  const [activePiece, setActivePiece] = useState(null)
   const [boardState, setBoardState] = useState(game.boardState);
   const [allowedMoves, setAllowedMoves] = useState((new Array(64).fill(null)))
 
@@ -21,6 +20,17 @@ function Game() {
 
     return () => window.removeEventListener("resize", resize);
   });
+  useEffect(() => {
+
+    if(activePiece === null){
+      setAllowedMoves((new Array(64).fill(null)))
+      return
+    }
+
+    let tempMoves = [...allowedMoves]
+    tempMoves[activePiece.id-8] = 1
+    setAllowedMoves(tempMoves)
+  }, [activePiece])
 
   function grabPiece(e) {
     let element = e.target;
@@ -31,19 +41,17 @@ function Game() {
       //slice up the css to find the color of the piece and compare it to game.turn
       element.style.backgroundImage.slice(24, -6).substring(0, 5) === game.turn
     ) {
-      activePiece = element;
-      activePiece.style.position = "absolute";
-      activePiecePosOldX = activePiece.style.left;
-      activePiecePosOldY = activePiece.style.top;
+      console.log("got here")
+      element.style.position = "absolute";
+      activePiecePosOldX = element.style.left;
+      activePiecePosOldY = element.style.top;
 
       //elements should be grabbed at the center, this takes care of that offset
-      activePiece.style.left = `${e.clientX - chessBoardSquareSize / 2}px`;
-      activePiece.style.top = `${e.clientY - chessBoardSquareSize / 2}px`;
-      
-      let tempAllowedMoves = [...allowedMoves]
-      tempAllowedMoves[activePiece.id - 8] = 1
-      setAllowedMoves(tempAllowedMoves)
-    }
+      element.style.left = `${e.clientX - chessBoardSquareSize / 2}px`;
+      element.style.top = `${e.clientY - chessBoardSquareSize / 2}px`;
+      setActivePiece(element)
+
+          }
   }
 
   function movePiece(e) {
@@ -82,8 +90,7 @@ function Game() {
       if (previousLocation === nextLocation || allowedMoves[nextLocation] !== 1) {
         activePiece.style.left = activePiecePosOldX;
         activePiece.style.top = activePiecePosOldY;
-        activePiece = null;
-        setAllowedMoves(new Array(64).fill(null))
+        setActivePiece(null)
         return;
       }
 
@@ -93,8 +100,7 @@ function Game() {
 
       game.turn = game.turn === "white" ? "black" : "white";
 
-      activePiece = null;
-      setAllowedMoves(new Array(64).fill(null))
+      setActivePiece(null)
     }
   }
 
