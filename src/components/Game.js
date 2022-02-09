@@ -13,6 +13,7 @@ function Game() {
     0.064 * window.innerWidth
   );
   const [boardState, setBoardState] = useState(game.boardState);
+  const [allowedMoves, setAllowedMoves] = useState(new Array(64).fill(null));
 
   const resize = () => setChessBoardSquareSize(0.064 * window.innerWidth);
   useEffect(() => {
@@ -74,6 +75,7 @@ function Game() {
         Math.floor((e.clientY - chessBoard.offsetTop) / chessBoardSquareSize) *
           8;
 
+      //conditions on which the piece should not move eg not allowed to move there
       if (previousLocation === nextLocation) {
         activePiece.style.left = activePiecePosOldX;
         activePiece.style.top = activePiecePosOldY;
