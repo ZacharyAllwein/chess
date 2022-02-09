@@ -8,14 +8,15 @@ function Game() {
   let activePiece = null;
   let activePiecePosOldX = null;
   let activePiecePosOldY = null;
+  let chessBoardSquareSize = 0.064 * window.innerWidth;
 
-  const [chessBoardSquareSize, setChessBoardSquareSize] = useState(
-    0.064 * window.innerWidth
-  );
+  // const [chessBoardSquareSize, setChessBoardSquareSize] = useState(
+  //   0.064 * window.innerWidth
+  // );
   const [boardState, setBoardState] = useState(game.boardState);
   const [allowedMoves, setAllowedMoves] = useState(new Array(64).fill(null));
 
-  const resize = () => setChessBoardSquareSize(0.064 * window.innerWidth);
+  const resize = () => (chessBoardSquareSize = 0.064 * window.innerWidth);
   useEffect(() => {
     window.addEventListener("resize", resize);
 
