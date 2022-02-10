@@ -1,9 +1,12 @@
+import pawnMoves from "./pawnMoves";
+
 //64 square flat list represented chessGame for keeping track of boardStates
 export default class ChessGame {
   constructor() {
     this.boardState = this.genInitialBoardState();
     //0 for white 1 for black
     this.turn = "white";
+    this.allowedMoves = [];
   }
 
   genInitialBoardState() {
@@ -50,5 +53,25 @@ export default class ChessGame {
   movePiece(prevIndex, nextIndex) {
     this.boardState[nextIndex] = this.boardState[prevIndex];
     this.boardState[prevIndex] = null;
+  }
+
+  set moves(pieceLocation) {
+    const piece = this.boardState[pieceLocation];
+    const color = piece.substring(0, 5);
+    const type = piece.slice(5, piece.length);
+
+    switch (type) {
+      case "Pawn":
+        this.allowedMoves = pawnMoves(color, pieceLocation, this.boardState);
+        break;
+      default:
+        this.allowedMoves = new Array(64).fill(1);
+    }
+
+    //because this is the easiest place to do this, also prevent pieces from moving on king
+    const blackKingIndex = this.boardState.indexOf("blackKing");
+    const whiteKingIndex = this.boardState.indexOf("whiteKing");
+    this.allowedMoves[blackKingIndex] = null;
+    this.allowedMoves[whiteKingIndex] = null;
   }
 }
