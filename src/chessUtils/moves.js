@@ -120,4 +120,41 @@ function rookMoves(color, location, boardState) {
   return allowedMoves;
 }
 
-export { pawnMoves, rookMoves };
+function knightMoves(color, location, boardState) {
+  let allowedMoves = new Array(64).fill(null);
+
+  //base modifiers
+  let twoDPos = [Math.floor(location / 8), location % 8];
+  let moves = [
+    [2, -1],
+    [2, 1],
+    [1, -2],
+    [1, 2],
+    [-1, -2],
+    [-1, 2],
+    [-2, -1],
+    [-2, 1],
+  ];
+  moves = moves.filter(
+    (move) =>
+      -1 < move[0] + twoDPos[0] &&
+      move[0] + twoDPos[0] < 8 &&
+      -1 < move[1] + twoDPos[1] &&
+      move[1] + twoDPos[1] < 8
+  );
+  console.log(moves);
+
+  const nextLocations = moves.map(move => location+(move[0]*8)+move[1])
+
+  nextLocations.forEach((nextLocation) => {
+    if (
+      locationEmpty(boardState, nextLocation) ||
+      color !== getColor(boardState, nextLocation, color)
+    ) {
+      allowedMoves[nextLocation] = 1;
+    }
+  });
+
+  return allowedMoves;
+}
+export { pawnMoves, rookMoves, knightMoves };
