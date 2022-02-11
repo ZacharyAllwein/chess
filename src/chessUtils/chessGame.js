@@ -1,4 +1,4 @@
-import { pawnMoves, rookMoves, knightMoves } from "./moves";
+import { pawnMoves, rookMoves, knightMoves, bishopMoves } from "./moves";
 
 //64 square flat list represented chessGame for keeping track of boardStates
 export default class ChessGame {
@@ -69,6 +69,9 @@ export default class ChessGame {
         break;
       case "Knight":
         this.allowedMoves = knightMoves(color, pieceLocation, this.boardState);
+        break;
+      case "Bishop":
+        this.allowedMoves = bishopMoves(color, pieceLocation, this.boardState);
         break;
       default:
         this.allowedMoves = new Array(64).fill(1);

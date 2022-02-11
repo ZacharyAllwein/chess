@@ -123,7 +123,7 @@ function rookMoves(color, location, boardState) {
 function knightMoves(color, location, boardState) {
   let allowedMoves = new Array(64).fill(null);
 
-  //base modifiers
+  //I hate 2d math but here we are
   let twoDPos = [Math.floor(location / 8), location % 8];
   let moves = [
     [2, -1],
@@ -135,6 +135,8 @@ function knightMoves(color, location, boardState) {
     [-2, -1],
     [-2, 1],
   ];
+
+  //basically make sure the move won't take you off the board
   moves = moves.filter(
     (move) =>
       -1 < move[0] + twoDPos[0] &&
@@ -142,10 +144,11 @@ function knightMoves(color, location, boardState) {
       -1 < move[1] + twoDPos[1] &&
       move[1] + twoDPos[1] < 8
   );
-  console.log(moves);
 
-  const nextLocations = moves.map(move => location+(move[0]*8)+move[1])
+  //translate the 2d moves back into normal flat move Yay!!
+  const nextLocations = moves.map((move) => location + move[0] * 8 + move[1]);
 
+  //loop that adds the nextLocation to the allowedMoves if it is empty or has an enemy piece on it
   nextLocations.forEach((nextLocation) => {
     if (
       locationEmpty(boardState, nextLocation) ||
@@ -157,4 +160,26 @@ function knightMoves(color, location, boardState) {
 
   return allowedMoves;
 }
-export { pawnMoves, rookMoves, knightMoves };
+
+function bishopMoves(color, location, boardState) {
+  let allowedMoves = new Array(64).fill(null);
+  const baseMoves = [-9, -7, 7, 9].filter(
+    (move) => location + move > -1 && location + move < 64
+  );
+
+  baseMoves.forEach((move) => {
+    let curLocation = location;
+
+    while (
+      locationEmpty(boardState, curLocation + move) ||
+      getColor(boardState, curLocation + move, color) !== color
+    ) {
+      curLocation += move;
+      allowedMoves[curLocation] = 1;
+
+      if (getColor(boardState, curLocation, color) !== color) break;
+    }
+  });
+  return allowedMoves;
+}
+export { pawnMoves, rookMoves, knightMoves, bishopMoves };
