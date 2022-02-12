@@ -10,6 +10,27 @@ const getColor = (boardState, nextLocation, color) =>
     ? color
     : boardState[nextLocation].substring(0, 5);
 
+//tells whether or not a move is logical from a starting position for linear moving pieces eg: rook, bishop, queen, king
+const canMove = (curLocation, move) => {
+  //if it is on the edge and it will move off the board
+  if ((move === -9 || move === 7) && leftEdge.includes(curLocation))
+    return false;
+  else if ((move === 9 || move === -7) && rightEdge.includes(curLocation))
+    return false;
+
+  //if the move will be out of bounds
+  if (curLocation + move < 0 || curLocation + move > 63) return false;
+
+  if (move === -1 && leftEdge.includes(curLocation)) return false;
+  else if (move === 1 && rightEdge.includes(curLocation)) return false;
+
+  //catches moves that would keep piece in same row
+  if (move === 7 && leftEdge.includes(curLocation)) return false;
+  else if (move === -7 && rightEdge.includes(curLocation)) return false;
+
+  return true;
+};
+
 //function that controls pawn movement
 function pawnMoves(color, location, boardState) {
   let allowedMoves = new Array(64).fill(null);
@@ -59,65 +80,64 @@ function pawnMoves(color, location, boardState) {
 }
 
 //function that controls rook movement
-function rookMoves(color, location, boardState) {
+// function rookMoves(color, location, boardState) {
+//   let allowedMoves = new Array(64).fill(null);
+
+//   const baseMoves = [-8, -1, 8, 1];
+
+//   baseMoves.forEach((move) => {
+//     let curLocation = location;
+
+//     while (
+//       //if a move will be valid
+//       canMove(curLocation, move) &&
+//       //and the next place it moves is either empty or an enemy square
+//       (locationEmpty(boardState, curLocation + move) ||
+//         getColor(boardState, curLocation + move, color) !== color)
+//     ) {
+//       curLocation += move;
+//       allowedMoves[curLocation] = 1;
+
+//       //if it moved on an enemy square, it is done moving
+//       if (getColor(boardState, curLocation, color) !== color) break;
+//     }
+//   });
+
+//   return allowedMoves;
+// }
+
+function linearMovesBase(color, location, boardState, baseMoves) {
   let allowedMoves = new Array(64).fill(null);
 
-  //white relative directions, the moves they make and constraints they impose
-  const directions = {
-    forward: {
-      modifier: -8,
-      constraint: (curLocation) => curLocation > 7,
-    },
-    backwards: {
-      modifier: 8,
-      constraint: (curLocation) => curLocation < 56,
-    },
-    left: {
-      modifier: -1,
-      constraint: (curLocation) => !leftEdge.includes(curLocation),
-    },
-    right: {
-      modifier: 1,
-      constraint: (curLocation) => !rightEdge.includes(curLocation),
-    },
-  };
-
-  //get a list containing all of the directions
-  const directionsKeys = Object.keys(directions);
-
-  //iterate through that list
-  directionsKeys.forEach((direction) => {
+  baseMoves.forEach((move) => {
     let curLocation = location;
 
     while (
-      //basically if it is within the logical movement of the piece and the place it is moving is unoccupied or has a piece of a different color on it
-      // I don't think even a million comments could explain this one
-
-      //if it is within the constraints
-      directions[direction].constraint(curLocation) &&
-      // and the next location is empty or it has a piece of a different color on it
-      (locationEmpty(
-        boardState,
-        curLocation + directions[direction].modifier
-      ) ||
-        getColor(
-          boardState,
-          curLocation + directions[direction].modifier,
-          color
-        ) !== color)
+      //if a move will be valid
+      canMove(curLocation, move) &&
+      //and the next place it moves is either empty or an enemy square
+      (locationEmpty(boardState, curLocation + move) ||
+        getColor(boardState, curLocation + move, color) !== color)
     ) {
-      //increment the current location
-      curLocation += directions[direction].modifier;
-
-      //add the new location to the allowed list
+      curLocation += move;
       allowedMoves[curLocation] = 1;
 
-      //catches if it has taken a piece and breaks the loop
+      //if it moved on an enemy square, it is done moving
       if (getColor(boardState, curLocation, color) !== color) break;
     }
   });
 
   return allowedMoves;
+}
+
+function rookMoves(color, location, boardState) {
+  const baseMoves = [-8, -1, 8, 1];
+  return linearMovesBase(color, location, boardState, baseMoves);
+}
+
+function bishopMoves(color, location, boardState) {
+  const baseMoves = [-9, -7, 7, 9];
+  return linearMovesBase(color, location, boardState, baseMoves);
 }
 
 function knightMoves(color, location, boardState) {
@@ -161,47 +181,66 @@ function knightMoves(color, location, boardState) {
   return allowedMoves;
 }
 
-function bishopMoves(color, location, boardState) {
+// function bishopMoves(color, location, boardState) {
+//   let allowedMoves = new Array(64).fill(null);
+
+//   const baseMoves = [-9, -7, 7, 9];
+
+//   baseMoves.forEach((move) => {
+//     let curLocation = location;
+
+//     while (
+//       //if a move will be valid
+//       canMove(curLocation, move) &&
+//       //and the next place it moves is either empty or an enemy square
+//       (locationEmpty(boardState, curLocation + move) ||
+//         getColor(boardState, curLocation + move, color) !== color)
+//     ) {
+//       curLocation += move;
+//       allowedMoves[curLocation] = 1;
+
+//       //if it moved on an enemy square, it is done moving
+//       if (getColor(boardState, curLocation, color) !== color) break;
+//     }
+//   });
+
+//   return allowedMoves;
+// }
+
+function queenMoves(color, location, boardState) {
+  const flatMoves = rookMoves(color, location, boardState);
+  const diagMoves = bishopMoves(color, location, boardState);
+
+  //wait I can't just caluclate the queens moves by seeing what the moves would be if it was a bishop and a rook and combining them can I?
+  //huh...
+  return flatMoves.map((value, index) =>
+    value === 1 ? value : diagMoves[index] === 1 ? diagMoves[index] : null
+  );
+}
+
+function kingMoves(color, location, boardState) {
   let allowedMoves = new Array(64).fill(null);
 
-  const baseMoves = [-9, -7, 7, 9];
-
-  const canMove = (curLocation, move) => {
-    //if it is on the edge and it will move off the board
-    if ((move === -9 || move === 7) && leftEdge.includes(curLocation))
-      return false;
-    else if ((move === 9 || move === -7) && rightEdge.includes(curLocation))
-      return false;
-
-    //if the move will be out of bounds
-    if (curLocation + move < 0 || curLocation + move > 63) return false;
-
-    //catches moves that would keep piece in same row
-    if (move === 7 && leftEdge.includes(curLocation)) return false;
-    else if (move === -7 && rightEdge.includes(curLocation)) return false;
-
-    return true;
-  };
+  //moves the king can make
+  const baseMoves = [-9, -8, -7, -1, 1, 7, 8, 9];
 
   baseMoves.forEach((move) => {
-    let curLocation = location;
-
-    while (
-      //if a move will be valid
-      canMove(curLocation, move) &&
-      //and the next place it moves is either empty or an enemy square
-      (locationEmpty(boardState, curLocation + move) ||
-        getColor(boardState, curLocation + move, color) !== color)
-    ) {
-      curLocation += move;
-      allowedMoves[curLocation] = 1;
-
-      //if it moved on an enemy square, it is done moving
-      if (getColor(boardState, curLocation, color) !== color) break;
-    }
+    if (
+      //if the nextlocation is logical and empty or occupied by an enemy piece.
+      canMove(location, move) &&
+      (locationEmpty(boardState, location + move) ||
+        getColor(boardState, location + move, color) !== color)
+    )
+      allowedMoves[location + move] = 1;
   });
 
   return allowedMoves;
 }
-
-export { pawnMoves, rookMoves, knightMoves, bishopMoves };
+export {
+  pawnMoves,
+  rookMoves,
+  knightMoves,
+  bishopMoves,
+  queenMoves,
+  kingMoves,
+};
