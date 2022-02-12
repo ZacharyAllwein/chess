@@ -79,33 +79,6 @@ function pawnMoves(color, location, boardState) {
   return allowedMoves;
 }
 
-//function that controls rook movement
-// function rookMoves(color, location, boardState) {
-//   let allowedMoves = new Array(64).fill(null);
-
-//   const baseMoves = [-8, -1, 8, 1];
-
-//   baseMoves.forEach((move) => {
-//     let curLocation = location;
-
-//     while (
-//       //if a move will be valid
-//       canMove(curLocation, move) &&
-//       //and the next place it moves is either empty or an enemy square
-//       (locationEmpty(boardState, curLocation + move) ||
-//         getColor(boardState, curLocation + move, color) !== color)
-//     ) {
-//       curLocation += move;
-//       allowedMoves[curLocation] = 1;
-
-//       //if it moved on an enemy square, it is done moving
-//       if (getColor(boardState, curLocation, color) !== color) break;
-//     }
-//   });
-
-//   return allowedMoves;
-// }
-
 function linearMovesBase(color, location, boardState, baseMoves) {
   let allowedMoves = new Array(64).fill(null);
 
@@ -180,32 +153,6 @@ function knightMoves(color, location, boardState) {
 
   return allowedMoves;
 }
-
-// function bishopMoves(color, location, boardState) {
-//   let allowedMoves = new Array(64).fill(null);
-
-//   const baseMoves = [-9, -7, 7, 9];
-
-//   baseMoves.forEach((move) => {
-//     let curLocation = location;
-
-//     while (
-//       //if a move will be valid
-//       canMove(curLocation, move) &&
-//       //and the next place it moves is either empty or an enemy square
-//       (locationEmpty(boardState, curLocation + move) ||
-//         getColor(boardState, curLocation + move, color) !== color)
-//     ) {
-//       curLocation += move;
-//       allowedMoves[curLocation] = 1;
-
-//       //if it moved on an enemy square, it is done moving
-//       if (getColor(boardState, curLocation, color) !== color) break;
-//     }
-//   });
-
-//   return allowedMoves;
-// }
 
 function queenMoves(color, location, boardState) {
   const flatMoves = rookMoves(color, location, boardState);
