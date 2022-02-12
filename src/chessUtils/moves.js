@@ -4,9 +4,9 @@ const rightEdge = [7, 15, 23, 31, 39, 47, 55, 63];
 
 //helper functions for figuring out what is in the next squares
 const locationEmpty = (boardState, nextLocation) =>
-  boardState[nextLocation] === null;
+  boardState[nextLocation] == null;
 const getColor = (boardState, nextLocation, color) =>
-  boardState[nextLocation] === null
+  boardState[nextLocation] === undefined || boardState[nextLocation] == null
     ? color
     : boardState[nextLocation].substring(0, 5);
 
@@ -163,23 +163,45 @@ function knightMoves(color, location, boardState) {
 
 function bishopMoves(color, location, boardState) {
   let allowedMoves = new Array(64).fill(null);
-  const baseMoves = [-9, -7, 7, 9].filter(
-    (move) => location + move > -1 && location + move < 64
-  );
+
+  const baseMoves = [-9, -7, 7, 9];
+
+  const canMove = (curLocation, move) => {
+    //if it is on the edge and it will move off the board
+    if ((move === -9 || move === 7) && leftEdge.includes(curLocation))
+      return false;
+    else if ((move === 9 || move === -7) && rightEdge.includes(curLocation))
+      return false;
+
+    //if the move will be out of bounds
+    if (curLocation + move < 0 || curLocation + move > 63) return false;
+
+    //catches moves that would keep piece in same row
+    if (move === 7 && leftEdge.includes(curLocation)) return false;
+    else if (move === -7 && rightEdge.includes(curLocation)) return false;
+
+    return true;
+  };
 
   baseMoves.forEach((move) => {
     let curLocation = location;
 
     while (
-      locationEmpty(boardState, curLocation + move) ||
-      getColor(boardState, curLocation + move, color) !== color
+      //if a move will be valid
+      canMove(curLocation, move) &&
+      //and the next place it moves is either empty or an enemy square
+      (locationEmpty(boardState, curLocation + move) ||
+        getColor(boardState, curLocation + move, color) !== color)
     ) {
       curLocation += move;
       allowedMoves[curLocation] = 1;
 
+      //if it moved on an enemy square, it is done moving
       if (getColor(boardState, curLocation, color) !== color) break;
     }
   });
+
   return allowedMoves;
 }
+
 export { pawnMoves, rookMoves, knightMoves, bishopMoves };
