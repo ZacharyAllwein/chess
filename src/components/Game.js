@@ -15,6 +15,15 @@ function Game() {
   const [allowedMoves, setAllowedMoves] = useState(new Array(64).fill(null));
 
   const resize = () => (chessBoardSquareSize = 0.064 * window.innerWidth);
+  const isInBounds = (x, y, chessBoard) => {
+    const maxX = chessBoard.offsetLeft + 8 * chessBoardSquareSize;
+    const minX = chessBoard.offsetLeft;
+    const maxY = chessBoard.offsetTop + 8 * chessBoardSquareSize;
+    const minY = chessBoard.offsetTop;
+
+    return x >= minX && x <= maxX && y >= minY && y <= maxY;
+  };
+
   useEffect(() => {
     window.addEventListener("resize", resize);
 
@@ -52,17 +61,8 @@ function Game() {
   function movePiece(e) {
     let chessBoard = chessBoardRef.current;
 
-    const isInBounds = (x, y) => {
-      const maxX = chessBoard.offsetLeft + 8 * chessBoardSquareSize;
-      const minX = chessBoard.offsetLeft;
-      const maxY = chessBoard.offsetTop + 8 * chessBoardSquareSize;
-      const minY = chessBoard.offsetTop;
-
-      return x >= minX && x <= maxX && y >= minY && y <= maxY;
-    };
-
     if (activePiece) {
-      if (!isInBounds(e.clientX, e.clientY)) return;
+      if (!isInBounds(e.clientX, e.clientY, chessBoard)) return;
       activePiece.style.top = `${e.clientY - chessBoardSquareSize / 2}px`;
       activePiece.style.left = `${e.clientX - chessBoardSquareSize / 2}px`;
     }

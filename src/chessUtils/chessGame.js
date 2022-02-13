@@ -85,7 +85,11 @@ export default class ChessGame {
 
     //actual castling movement
     //if the piece has moved to a casteling position. eg +- 2 of initial position
-    if (Math.abs(nextIndex - prevIndex) === 2) {
+    if (
+      Math.abs(nextIndex - prevIndex) === 2 &&
+      (this.boardState[prevIndex] === "blackKing" ||
+        this.boardState[prevIndex] === "whiteKing")
+    ) {
       // if next index - prevIndex is negative, it is a left castle and the rook is 4 units away else it is right and 3 units away
       let rookIndex =
         (nextIndex - prevIndex) / 2 > 0 ? prevIndex + 3 : prevIndex - 4;
