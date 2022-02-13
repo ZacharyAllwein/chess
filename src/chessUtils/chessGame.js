@@ -128,42 +128,38 @@ export default class ChessGame {
       case "King":
         this.allowedMoves = kingMoves(color, pieceLocation, this.boardState);
 
-        //castle time
-        // if the white king has not moved before
-        if (color === "white" && !this.kingsHaveMoved[0]) {
-          //if the left rook has not moved and the spaces inbetween roock and king are empty
-          if (
-            !this.rooksHaveMoved[0][0] &&
-            this.boardState[57] === null &&
-            this.boardState[58] === null &&
-            this.boardState[59] === null
-          )
-            this.allowedMoves[58] = 1;
+        //spaces that neeed to be empty if we want to castle
+        const neededSpaces =
+          color === "white"
+            ? [
+                [57, 58, 59],
+                [61, 62],
+              ]
+            : [
+                [1, 2, 3],
+                [5, 6],
+              ];
 
-          if (
-            !this.rooksHaveMoved[0][1] &&
-            this.boardState[61] === null &&
-            this.boardState[62] === null
-          )
-            this.allowedMoves[62] = 1;
-        }
-        if (color === "black" && !this.kingsHaveMoved[1]) {
-          //if the left rook has not moved and the spaces inbetween roock and king are empty
-          if (
-            !this.rooksHaveMoved[1][0] &&
-            this.boardState[1] === null &&
-            this.boardState[2] === null &&
-            this.boardState[3] === null
-          )
-            this.allowedMoves[2] = 1;
+        //whether or not the king has moved
+        const kingMoved =
+          color === "white" ? this.kingsHaveMoved[0] : this.kingsHaveMoved[1];
 
-          if (
-            !this.rooksHaveMoved[1][1] &&
-            this.boardState[5] === null &&
-            this.boardState[6] === null
-          )
-            this.allowedMoves[6] = 1;
+        //if the king hasn't moved
+        if (!kingMoved) {
+          //for each of the kings respective rooks
+          this.rooksHaveMoved[color === "white" ? 0 : 1].forEach(
+            (value, index) => {
+              // return if the rook has moved
+              if (value) return;
+
+              //if all of the required spaces are empty
+              if (neededSpaces[index].every((num) => !this.boardState[num]))
+                //add the castling place to allowed moves
+                this.allowedMoves[neededSpaces[index][1]] = 1;
+            }
+          );
         }
+
         break;
       default:
         this.allowedMoves = new Array(64).fill(1);
