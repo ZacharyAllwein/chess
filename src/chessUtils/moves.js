@@ -48,7 +48,8 @@ function pawnMoves(color, location, boardState) {
 
   if (
     homeSquares.includes(location) &&
-    locationEmpty(boardState, location + 2 * baseMove)
+    locationEmpty(boardState, location + 2 * baseMove) &&
+    locationEmpty(boardState, location + baseMove)
   ) {
     allowedMoves[location + baseMove * 2] = 1;
   }

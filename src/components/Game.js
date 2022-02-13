@@ -53,13 +53,10 @@ function Game() {
     let chessBoard = chessBoardRef.current;
 
     const isInBounds = (x, y) => {
-      let edgeAdjust = chessBoardSquareSize / 2;
-
-      const maxX =
-        chessBoard.offsetLeft + 8 * chessBoardSquareSize - edgeAdjust;
-      const minX = chessBoard.offsetLeft + edgeAdjust;
-      const maxY = chessBoard.offsetTop + 8 * chessBoardSquareSize - edgeAdjust;
-      const minY = chessBoard.offsetTop + edgeAdjust;
+      const maxX = chessBoard.offsetLeft + 8 * chessBoardSquareSize;
+      const minX = chessBoard.offsetLeft;
+      const maxY = chessBoard.offsetTop + 8 * chessBoardSquareSize;
+      const minY = chessBoard.offsetTop;
 
       return x >= minX && x <= maxX && y >= minY && y <= maxY;
     };
